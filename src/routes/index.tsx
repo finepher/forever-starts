@@ -83,6 +83,7 @@ function Index() {
   useGSAP(
     () => {
       gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
       const q = gsap.utils.selector(containerRef);
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -214,12 +215,12 @@ function Index() {
         }
       );
 
-      /* ---------------- horizontal pinned gallery ---------------- */
+      /* ---------------- horizontal pinned gallery (desktop + mobile) ---------------- */
       const track = q(".h-track")[0] as HTMLElement | undefined;
       const gallery = q(".h-gallery")[0] as HTMLElement | undefined;
-      if (track && gallery && window.innerWidth > 768) {
-        const scrollLen = () => track.scrollWidth - window.innerWidth;
-        gsap.to(track, {
+      if (track && gallery) {
+        const scrollLen = () => Math.max(track.scrollWidth - window.innerWidth, 1);
+        const hTween = gsap.to(track, {
           x: () => -scrollLen(),
           ease: "none",
           scrollTrigger: {
@@ -230,11 +231,14 @@ function Index() {
             scrub: 1,
             invalidateOnRefresh: true,
             anticipatePin: 1,
+            fastScrollEnd: true,
           },
         });
         q(".h-card").forEach((card) => {
+          const img = card.querySelector("img");
+          if (!img) return;
           gsap.fromTo(
-            card.querySelector("img"),
+            img,
             { scale: 1.25, xPercent: -6 },
             {
               scale: 1,
@@ -242,7 +246,7 @@ function Index() {
               ease: "none",
               scrollTrigger: {
                 trigger: card,
-                containerAnimation: gsap.getTweensOf(track)[0],
+                containerAnimation: hTween,
                 start: "left right",
                 end: "right left",
                 scrub: true,
@@ -489,10 +493,13 @@ function Index() {
           </div>
         </section>
 
-        {/* Horizontal gallery */}
-        <section id="gallery" className="h-gallery relative overflow-hidden bg-charcoal text-champagne">
-          <div className="h-track flex h-screen w-max items-center gap-6 px-6 md:gap-12 md:px-[12vw]">
-            <div className="w-[70vw] shrink-0 md:w-[26vw]">
+        {/* Horizontal gallery — vertical scroll drives sideways motion on all screens */}
+        <section
+          id="gallery"
+          className="h-gallery relative h-dvh overflow-hidden bg-charcoal text-champagne touch-pan-y"
+        >
+          <div className="h-track flex h-full w-max items-center gap-6 px-6 will-change-transform md:gap-12 md:px-[12vw]">
+            <div className="h-intro w-[78vw] shrink-0 md:w-[26vw]">
               <span className="mb-6 block text-[10px] uppercase tracking-[0.4em] text-gold">
                 (02) — Moments
               </span>
@@ -508,7 +515,7 @@ function Index() {
             </div>
 
             {GALLERY.map((item) => (
-              <figure key={item.label} className="h-card w-[72vw] shrink-0 md:w-[30vw]">
+              <figure key={item.label} className="h-card w-[78vw] shrink-0 md:w-[30vw]">
                 <div className="aspect-[3/4] overflow-hidden">
                   <img
                     src={item.src}

@@ -12,4 +12,8 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Railway runs a Node process; override Lovable's default Cloudflare Nitro target.
+  nitro: {
+    preset: "node-server",
+  },
 });

@@ -164,6 +164,7 @@ function Index() {
 
       {/* Hero Section */}
       <section
+        ref={heroSectionRef}
         id="hero"
         className="relative flex h-screen flex-col items-center justify-center overflow-hidden px-4 text-center"
       >

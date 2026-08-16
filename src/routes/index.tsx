@@ -116,12 +116,12 @@ function Index() {
         );
       });
 
-      if (heroImageRef.current) {
+      if (heroImageRef.current && heroSectionRef.current) {
         gsap.to(heroImageRef.current, {
           yPercent: 12,
           ease: "none",
           scrollTrigger: {
-            trigger: containerRef.current?.querySelector("#hero"),
+            trigger: heroSectionRef.current,
             start: "top top",
             end: "bottom top",
             scrub: true,

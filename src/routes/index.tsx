@@ -31,6 +31,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const containerRef = useRef<HTMLElement>(null);
+  const heroSectionRef = useRef<HTMLElement>(null);
   const heroTextRef = useRef<HTMLDivElement>(null);
   const heroImageRef = useRef<HTMLImageElement>(null);
   const scrollLineRef = useRef<HTMLDivElement>(null);
